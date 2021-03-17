@@ -160,6 +160,60 @@ const DYNAMIC_TWEAKS = [
 	// Commit group headers in commit listings.
 	{selector: '.commit-group-title',
 		tweak: [makeHeading, 2]},
+	// Project boards
+	// Label columns
+	{
+		selector: '.js-project-column',
+		tweak: el => {
+			el.setAttribute('aria-roledescription', 'column');
+			let heading = el.querySelector('h3');
+			let headingId = setAriaIdIfNecessary(heading);
+			el.setAttribute('aria-labelledby',headingId);
+		},
+	},
+	// Label and describe cards
+	{
+		selector: '.js-project-column-card',
+		tweak: el => {
+			el.setAttribute('aria-roledescription', 'card');
+			let label = "";
+			let description = "";
+			let commentBody = el.querySelector('.js-comment-body');
+			if(commentBody) {
+				label += "Note ";
+				label += commentBody.innerText;
+			} else if(el.matches('.issue-card')) {
+				let octicon = el.querySelector('.js-issue-octicon');
+				if(octicon) {
+					if(octicon.matches('.octicon-issue-closed')) {
+						label += "Closed issue ";
+					} else if(octicon.matches('.octicon-issue-open')) {
+						label += "Open issue ";
+					} else if(octicon.matches('.octicon-git-pull-request.closed')) {
+						label += "Closed PR ";
+					} else if(octicon.matches('.octicon-git-pull-request.draft')) {
+						label += "Draft PR ";
+					} else if(octicon.matches('.octicon-git-pull-request.open')) {
+						label += "Open PR ";
+					} else if(octicon.matches('.octicon-git-pull-request.merged')) {
+						label += "Merged PR ";
+					} else {
+						label += octicon.getAttribute('aria-label')+" ";
+					}
+				}
+				let assignee = el.querySelector('.AvatarStack-body .avatar-user');
+				if(assignee) {
+					label += assignee.getAttribute('alt')+" ";
+				}
+				let issueLink = el.querySelector('.js-project-card-issue-link');
+				label += issueLink.innerText;
+				let details = issueLink.nextElementSibling;
+				description += details.innerText;
+			}
+			el.setAttribute('aria-label', label);
+			el.setAttribute('aria-description', description);
+		},
+	},
 ];
 
 /*** Lights, camera, action! ***/
