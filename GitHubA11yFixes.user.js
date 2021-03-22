@@ -214,6 +214,22 @@ const DYNAMIC_TWEAKS = [
 			el.setAttribute('aria-description', description);
 		},
 	},
+	// Make file names be headings,
+	// and reorder the info so that it is
+	// file name, number of changes, expand diff contents, copy
+	{
+		selector: '.file-info',
+		tweak: el => {
+			makeHeading(el, 2);
+			let ownsString = [
+				setAriaIdIfNecessary(el.children[2]),
+				setAriaIdIfNecessary(el.children[1]),
+				setAriaIdIfNecessary(el.children[0]),
+				setAriaIdIfNecessary(el.children[3]),
+			].join(" ");
+			el.setAttribute('aria-owns', ownsString);
+		},
+	},
 ];
 
 /*** Lights, camera, action! ***/
